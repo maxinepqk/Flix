@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AlamofireImage
 
 class NowPlayingViewController: UIViewController, UITableViewDataSource {
 
@@ -16,6 +17,12 @@ class NowPlayingViewController: UIViewController, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
+        
+//        // Initialize a UIRefreshControl
+//        let refreshControl = UIRefreshControl()
+//        refreshControl.addTarget(self, action: #selector(refreshControlAction(_refreshControl:)), for: UIControlEvents.valueChanged)
+//        // add refresh control to table view
+//        tableView.insertSubview(refreshControl, at: 0)
         
         // Network Request
         let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed")!
@@ -31,14 +38,34 @@ class NowPlayingViewController: UIViewController, UITableViewDataSource {
                 self.movies = movies
                 self.tableView.reloadData()
                 }
-                // TODO: Store the movies in a property to use elsewhere
-                // TODO: Reload your table view data
-            
         }
         task.resume()
+        
 
         // Do any additional setup after loading the view.
     }
+    
+//    // Makes a network request to get updated data
+//    // Updates the tableView with the new data
+//    // Hides the RefreshControl
+//    func refreshControlAction(_ refreshControl: UIRefreshControl) {
+//        
+//        // ... Create the URLRequest `myRequest` ...
+//        
+//        // Configure session so that completion handler is executed on main UI thread
+//        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+//        let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
+//            
+//            // ... Use the new data to update the data source ...
+//            
+//            // Reload the tableView now that there is new data
+//            myTableView.reloadData()
+//            
+//            // Tell the refreshControl to stop spinning
+//            refreshControl.endRefreshing()
+//        }
+//        task.resume()
+//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies.count
@@ -51,6 +78,12 @@ class NowPlayingViewController: UIViewController, UITableViewDataSource {
         let overview = movie["overview"] as! String
         cell.titleLabel.text = title
         cell.overviewLabel.text = overview
+        
+        let posterPathString = movie["poster_path"] as! String
+        let baseURLString = "https://image.tmdb.org/t/p/w500"
+        let posterURL = URL(string: baseURLString + posterPathString)!
+        cell.posterImageView.af_setImage(withURL: posterURL)
+        
         return cell
     }
     
