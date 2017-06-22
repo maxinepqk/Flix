@@ -71,8 +71,19 @@ class NowPlayingViewController: UIViewController, UITableViewDataSource {
                 let movies = dataDictionary["results"] as! [[String:Any]]
                 self.movies = movies
                 self.tableView.reloadData()
-                }
+            }
+        // Network Alert Controller
+        let networkAlertController = UIAlertController(title: "Cannot Get Movies", message: "The Internet connection appears to be offline", preferredStyle: .alert)
+        // create an try again action
+        let tryAgainAction = UIAlertAction(title: "Try Again", style: .default) { (action) in
+            self.tableView.reloadData()
+            }
+        // add the OK action to the alert controller
+        networkAlertController.addAction(tryAgainAction)
+            self.present(networkAlertController, animated: true)
+        
         }
+
         task.resume()
         
 
