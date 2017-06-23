@@ -8,13 +8,15 @@
 
 import UIKit
 
-class SuperheroViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class SuperheroViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
 
+    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var collectionView: UICollectionView!
     var refreshControl: UIRefreshControl!
     var movies: [[String: Any]] = []
     var networkAlertController: UIAlertController!
+    var filteredMovies: [[String: Any]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,7 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource, UIC
         
         collectionView.dataSource = self
         collectionView.delegate = self
+        searchBar.delegate = self
         
         // Start the activity indicator
         activityIndicator.startAnimating()
@@ -57,7 +60,9 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource, UIC
             } else if let data = data {
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 let movies = dataDictionary["results"] as! [[String:Any]]
+                let filteredMovies = dataDictionary["results"] as! [[String:Any]]
                 self.movies = movies
+                self.filteredMovies = filteredMovies
                 self.collectionView.reloadData()
                 self.refreshControl.endRefreshing()
             }
@@ -75,12 +80,12 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-         return movies.count
+         return filteredMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuperheroCell", for: indexPath) as! SuperheroCell
-        let movie = movies[indexPath.item]
+        let movie = filteredMovies[indexPath.item]
 
         if let posterPathString = movie["poster_path"] as? String {
             let baseURLString = "https://image.tmdb.org/t/p/w500"
@@ -90,10 +95,19 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource, UIC
         return cell
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredMovies = searchText.isEmpty ? movies : movies.filter {
+            (item: [String: Any]) -> Bool in
+            // If dataItem matches the searchText, return true to include it
+            return (item["title"] as! String).range(of: searchText, options: .caseInsensitive, range: nil, locale: nil) != nil
+        }
+        collectionView.reloadData()
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let cell = sender as! UICollectionViewCell
         if let indexPath = collectionView.indexPath(for: cell) {
-            let movie = movies[indexPath.row]
+            let movie = filteredMovies[indexPath.row]
             let detailViewController = segue.destination as! DetailViewController
             detailViewController.movie = movie
         }
