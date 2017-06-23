@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AFNetworking
 
 class SuperheroViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
 
@@ -90,7 +91,30 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource, UIC
         if let posterPathString = movie["poster_path"] as? String {
             let baseURLString = "https://image.tmdb.org/t/p/w500"
             let posterURL = URL(string: baseURLString + posterPathString)!
-            cell.superheroImageView.af_setImage(withURL: posterURL)
+            //cell.superheroImageView.af_setImage(withURL: posterURL)
+
+            let imageRequest = URLRequest(url: posterURL)
+            cell.superheroImageView.setImageWith(
+                imageRequest,
+                placeholderImage: nil,
+                success: { (imageRequest, imageResponse, image) -> Void in
+                    
+                    // imageResponse will be nil if the image is cached
+                    if imageResponse != nil {
+                        print("Image was NOT cached, fade in image")
+                        cell.superheroImageView.alpha = 0.0
+                        cell.superheroImageView.image = image
+                        UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                            cell.superheroImageView.alpha = 1.0
+                        })
+                    } else {
+                        print("Image was cached so just update the image")
+                        cell.superheroImageView.image = image
+                    }
+            },
+                failure: { (imageRequest, imageResponse, error) -> Void in
+                    // do something for the failure condition
+            })
         }
         return cell
     }
