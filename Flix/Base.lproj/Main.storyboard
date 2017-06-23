@@ -134,7 +134,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kvo-Qs-Zkr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2258.4000000000001" y="72.413793103448285"/>
+            <point key="canvasLocation" x="1476" y="878"/>
         </scene>
         <!--Now Playing-->
         <scene sceneID="sJc-V0-6pK">
@@ -174,7 +174,7 @@
             </objects>
             <point key="canvasLocation" x="-402.39999999999998" y="73.313343328335833"/>
         </scene>
-        <!--Superhero View Controller-->
+        <!--Movies-->
         <scene sceneID="8JX-uc-IdJ">
             <objects>
                 <viewController id="M1q-bA-qVv" customClass="SuperheroViewController" customModule="Flix" customModuleProvider="target" sceneMemberID="viewController">
@@ -212,6 +212,7 @@
                                         </view>
                                         <connections>
                                             <outlet property="superheroImageView" destination="iPd-aj-89q" id="WFi-zB-yyt"/>
+                                            <segue destination="laQ-VH-3I1" kind="show" id="RSc-Cd-t0s"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -219,7 +220,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="cuu-ql-6io"/>
+                    <navigationItem key="navigationItem" title="Movies" id="cuu-ql-6io"/>
                     <connections>
                         <outlet property="collectionView" destination="0Zf-9V-DBg" id="ysO-Pf-WBp"/>
                     </connections>
@@ -252,4 +253,7 @@
         <image name="now_playing_tabbar_item" width="21" height="21"/>
         <image name="superhero_tabbar_item" width="21" height="23"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="4YA-C7-0qd"/>
+    </inferredMetricsTieBreakers>
 </document>

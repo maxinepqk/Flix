@@ -11,4 +11,6 @@ import UIKit
 class SuperheroCell: UICollectionViewCell {
     
     @IBOutlet weak var superheroImageView: UIImageView!
+    
+    
 }

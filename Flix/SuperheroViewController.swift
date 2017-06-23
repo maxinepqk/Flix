@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SuperheroViewController: UIViewController, UICollectionViewDataSource {
+class SuperheroViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
 
     @IBOutlet weak var collectionView: UICollectionView!
     var movies: [[String: Any]] = []
@@ -44,8 +44,8 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource {
         task.resume()
         
     }
-
     
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
          return movies.count
     }
@@ -53,12 +53,22 @@ class SuperheroViewController: UIViewController, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuperheroCell", for: indexPath) as! SuperheroCell
         let movie = movies[indexPath.item]
+
         if let posterPathString = movie["poster_path"] as? String {
             let baseURLString = "https://image.tmdb.org/t/p/w500"
             let posterURL = URL(string: baseURLString + posterPathString)!
             cell.superheroImageView.af_setImage(withURL: posterURL)
         }
         return cell
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let cell = sender as! UICollectionViewCell
+        if let indexPath = collectionView.indexPath(for: cell) {
+            let movie = movies[indexPath.row]
+            let detailViewController = segue.destination as! DetailViewController
+            detailViewController.movie = movie
+        }
     }
     
     override func didReceiveMemoryWarning() {
